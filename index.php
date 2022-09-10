@@ -4,6 +4,7 @@ session_start();
 $message = '';
 $greeting = '';
 
+//login
 if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     if (isset($_POST['submit']) and !empty($_POST['username'] and !empty($_POST['password']))) {
         $username = filter_var($_POST['username'], FILTER_SANITIZE_SPECIAL_CHARS);
@@ -23,15 +24,35 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 if (!empty($_SESSION['username']) and !empty($_SESSION['password'])) {
     $greeting = "<h3>Hello {$_SESSION['username']}!</h3>";
     echo "click here to <a href=\"index.php?action=logout\">logout</a>";
-    
 } else {
     echo 'Welcome Guest!<br>';
 }
 
-
 if (isset($_GET['action']) == 'logout') {
     session_destroy();
 };
+
+// create new folder
+if(isset($_POST['newFolder'])) {
+    if(!empty($_POST['createNewFolder'])) {    
+        $newFolderName = $_POST['createNewFolder'];
+        $dirCreate = './' . $newFolderName;
+        if(!is_dir($dirCreate)) {
+            mkdir($dirCreate, 0777, true);
+            $dirMessage =  '<p style="color: blue">A new file created!</p>';
+        } else {
+            $dirMessage =  '<p style="color: red">A file with the same name already exist!</p>';
+        }
+    }
+}
+
+?>
+
+
+<?php
+// testing
+
+
 
 ?>
 
@@ -65,7 +86,7 @@ if (isset($_GET['action']) == 'logout') {
             <?php isset($_SESSION['logged']) == true ? print($greeting) : null ?>
 
             <div <?php isset($_SESSION['logged']) == true ? print('style="display: none"') : print('style="display: block"') ?>>
-            <div class="d-flex flex-column align-items-center">
+                <div class="d-flex flex-column align-items-center">
                     <div class="text-center mt-5 mb-4">
                         <h2>Welcome!</h2>
                         <h5>Please fill in the login form!</h5>
@@ -95,6 +116,31 @@ if (isset($_GET['action']) == 'logout') {
             </div>
         </div>
 
+        <!-- create new folder -->
+            <div>
+                <div class="d-flex flex-column align-items-start width">
+                    <div class="text-center mt-5 mb-1">
+                        <h5>Create new folder</h5>
+                    </div>
+                    <div class="form-control">
+                        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                            <div class="d-flex flex-column">
+                                <div>
+                                    <label for="newFolder" class="form-label">Folder name: </label>
+                                    <input type="text" name="createNewFolder" placeholder="Create new folder" class="form-control">
+                                </div>
+                                <div class="mt-2 align-self-end">
+                                    <input type="submit" name="newFolder" value="Create new folder" class="btn btn-primary">
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mt-3">
+                        <p><?php echo $dirMessage ?? null ?></p>
+                    </div>
+                </div>
+            </div>
 
 
 
