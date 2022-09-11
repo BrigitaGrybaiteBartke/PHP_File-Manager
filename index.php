@@ -39,11 +39,11 @@ if (isset($_POST['newFolder'])) {
         $newFolderName = $_POST['createNewFolder'];
 
         $dirCreate = '.' . '/' . $newFolderName;
-        if(isset($_GET['path'])){
+        if (isset($_GET['path'])) {
             $dirCreate .=  $_GET['path'] . '/' . $newFolderName;
         }
 
-       
+
         if (!is_dir($dirCreate)) {
             mkdir($dirCreate, 0777, true);
             $dirMessage =  '<p style="color: blue">A new file created!</p>';
@@ -128,7 +128,6 @@ if (isset($_POST['upload'])) {
         <!-- login form -->
         <!-- logout form -->
         <div>
-            <!-- click here to <a href="index.php?action=logout">logout</a> -->
 
             <?php isset($_SESSION['logged']) == true ? print($greeting) : null ?>
 
@@ -163,101 +162,106 @@ if (isset($_POST['upload'])) {
             </div>
         </div>
 
-        <!-- create new folder -->
-        <div>
-            <div class="d-flex flex-column align-items-start width">
-                <div class="text-center mt-5 mb-1">
-                    <h5>Create new folder</h5>
+        <div <?php isset($_SESSION['logged']) == false ? print('style="display: none"') : print('style="display: block"') ?>>
+
+            <!-- create new folder -->
+            <div>
+                <div class="d-flex flex-column align-items-start width">
+                    <div class="text-center mt-5 mb-1">
+                        <h5>Create new folder</h5>
+                    </div>
+                    <div class="form-control">
+
+                        <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST">
+                            <div class="d-flex flex-column">
+                                <div>
+                                    <label for="newFolder" class="form-label">Folder name: </label>
+                                    <input type="text" name="createNewFolder" placeholder="Create new folder" class="form-control">
+                                </div>
+                                <div class="mt-2 align-self-end">
+                                    <input type="submit" name="newFolder" value="Create new folder" class="btn btn-primary">
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mt-1">
+                        <p><?php echo $dirMessage ?? null ?></p>
+                    </div>
                 </div>
-                <div class="form-control">
+            </div>
 
-                    <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST">
-                        <div class="d-flex flex-column">
-                            <div>
-                                <label for="newFolder" class="form-label">Folder name: </label>
-                                <input type="text" name="createNewFolder" placeholder="Create new folder" class="form-control">
-                            </div>
-                            <div class="mt-2 align-self-end">
-                                <input type="submit" name="newFolder" value="Create new folder" class="btn btn-primary">
-                            </div>
+            <!-- upload folder -->
 
+
+            <div class="form-control">
+                <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST" enctype="multipart/form-data">
+                    <div class="d-flex flex-column">
+                        <div>
+                            <label for="upload">Select file to upload</label>
+                            <input type="file" name="upload">
                         </div>
-                    </form>
-                </div>
-                <div class="mt-1">
-                    <p><?php echo $dirMessage ?? null ?></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- upload folder -->
-        <div class="form-control">
-            <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST" enctype="multipart/form-data">
-                <div class="d-flex flex-column">
-                    <div>
-                        <label for="upload">Select file to upload</label>
-                        <input type="file" name="upload">
+                        <div class="mt-2 align-self-end">
+                            <input type="submit" name="upload" value="Upload file">
+                        </div>
                     </div>
-                    <div class="mt-2 align-self-end">
-                        <input type="submit" name="upload" value="Upload file">
-                    </div>
+                </form>
+                <div class="mt-3">
+                    <?php echo $uplMessage ?? null ?>
                 </div>
-            </form>
-            <div class="mt-3">
-                <?php echo $uplMessage ?? null ?>
+                <div>
+                    <span>Image name: <?php echo $_FILES['upload']['name'] ?? 'No image selected!' ?></span><br>
+                    <span>Image type: <?php echo $_FILES['upload']['type'] ?? 'No image selected!' ?></span><br>
+                    <span>Image size: <?php echo $_FILES['upload']['size'] ?? 'No image selected!' ?></span><br>
+                </div>
             </div>
+
+            <!-- table -->
             <div>
-                <span>Image name: <?php echo $_FILES['upload']['name'] ?? 'No image selected!' ?></span><br>
-                <span>Image type: <?php echo $_FILES['upload']['type'] ?? 'No image selected!' ?></span><br>
-                <span>Image size: <?php echo $_FILES['upload']['size'] ?? 'No image selected!' ?></span><br>
-            </div>
-        </div>
+                <div>
+                    <h3>File manager</h3>
+                </div>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                    <!-- table logic -->
+                    <?php
 
-        <!-- table -->
-        <div>
-            <div>
-                <h3>File manager</h3>
-            </div>
-            <table>
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                </tr>
-                <!-- table logic -->
-                <?php
-   
-                $current = '.';
-            
-                if (isset($_GET['path'])) {
-                    $current .= $_GET['path'];
-                }
-               
-                $list = array_diff(scandir($current), array('.', '..'));
+                    $current = '.';
 
-                foreach ($list as $listItem) {
-                    $isFolder = is_dir($current . '/' . $listItem);
+                    if (isset($_GET['path'])) {
+                        $current .= $_GET['path'];
+                    }
 
-                    if ($isFolder) {
-                        if (isset($_GET['path'])) {
-                            print("<tr><td>" . "<a href='?path=" . $_GET['path'] . "/" . $listItem . "'>" . $listItem . "</a></td>");
-                            print('<td>Directory</td>');
-                            print('<td></td>');
+                    $list = array_diff(scandir($current), array('.', '..'));
+
+                    foreach ($list as $listItem) {
+                        $isFolder = is_dir($current . '/' . $listItem);
+
+                        if ($isFolder) {
+                            if (isset($_GET['path'])) {
+                                print("<tr><td>" . "<a href='?path=" . $_GET['path'] . "/" . $listItem . "'>" . $listItem . "</a></td>");
+                                print('<td>Directory</td>');
+                                print('<td></td>');
+                            }
+                        }
+                        $pathToFile = $current . '/' . $listItem;
+                        if (is_file($pathToFile)) {
+                            print("<tr><td>" . "<a href='?path=" . $pathToFile . "'>" .  $listItem . "</a></td>");
+                            print('<td>File</td>');
+
+                            $_GET["del"] = $current . '/' . $listItem;
+                            $_GET['path'] = $current . '/' . $listItem;
+                            print("<td>" . "<a href='delete.php?" . http_build_query($_GET) . "'>Delete</a>" . " " . "<a href='download.php?" . http_build_query($_GET) . "'> Download </a>" . "</td></tr>");
                         }
                     }
-                    $pathToFile = $current . '/' . $listItem;
-                    if (is_file($pathToFile)) {
-                        print("<tr><td>" . "<a href='?path=" . $pathToFile . "'>" .  $listItem . "</a></td>");
-                        print('<td>File</td>');
-                       
-                        $_GET["del"] = $current . '/' . $listItem;
-                        $_GET['path'] = $current . '/' . $listItem; 
-                        print("<td>" . "<a href='delete.php?" . http_build_query($_GET) . "'>Delete</a>" . " " . "<a href='download.php?" . http_build_query($_GET) . "'> Download </a>" . "</td></tr>");
-                    }
-                }
-                print('</tbody></table>');
+                    print('</tbody></table>');
 
-                ?>
+                    ?>
+            </div>
         </div>
     </div>
 
