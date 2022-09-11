@@ -23,10 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 }
 
 if (!empty($_SESSION['username']) and !empty($_SESSION['password'])) {
-    $greeting = "<h3>Hello {$_SESSION['username']}!</h3>";
-    echo "click here to <a href=\"index.php?action=logout\">logout</a>";
+    $greeting = "<h3 class='text-center'>Hello {$_SESSION['username']}!</h3>";
+    $logOut = "Click here to <a href=\"index.php?action=logout\">logout</a>";
 } else {
-    echo 'Welcome Guest!<br>';
+    $guest = 'Welcome Guest!';
 }
 
 if (isset($_GET['action']) == 'logout') {
@@ -38,17 +38,16 @@ if (isset($_POST['newFolder'])) {
     if (!empty($_POST['createNewFolder'])) {
         $newFolderName = $_POST['createNewFolder'];
 
-        $dirCreate = '.' . '/' . $newFolderName;
+        $dirCreate = './' . $newFolderName;
         if (isset($_GET['path'])) {
             $dirCreate .=  $_GET['path'] . '/' . $newFolderName;
         }
 
-
         if (!is_dir($dirCreate)) {
             mkdir($dirCreate, 0777, true);
-            $dirMessage =  '<p style="color: blue">A new file created!</p>';
+            $dirMessage =  '<p style="color: blue">A new folder created!</p>';
         } else {
-            $dirMessage =  '<p style="color: red">A file with the same name already exist!</p>';
+            $dirMessage =  '<p style="color: red">A folder with the same name already exist!</p>';
         }
     }
 }
@@ -98,26 +97,16 @@ if (isset($_POST['upload'])) {
     <!-- Bootstrap  -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+
     <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
         .width {
             width: 350px;
-        }
-
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        td,
-        th {
-            border: 3px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #a59b9b;
         }
     </style>
 
@@ -125,12 +114,13 @@ if (isset($_POST['upload'])) {
 
 <body>
     <div class="container">
+        <div class="mt-2"><?php echo $guest ?? null ?></div>
+        <div class="mt-2"><?php echo $logOut ?? null ?></div>
+
         <!-- login form -->
         <!-- logout form -->
         <div>
-
             <?php isset($_SESSION['logged']) == true ? print($greeting) : null ?>
-
             <div <?php isset($_SESSION['logged']) == true ? print('style="display: none"') : print('style="display: block"') ?>>
                 <div class="d-flex flex-column align-items-center">
                     <div class="text-center mt-5 mb-4">
@@ -163,9 +153,8 @@ if (isset($_POST['upload'])) {
         </div>
 
         <div <?php isset($_SESSION['logged']) == false ? print('style="display: none"') : print('style="display: block"') ?>>
-
             <!-- create new folder -->
-            <div>
+            <div class="d-flex justify-content-evenly align-items-end">
                 <div class="d-flex flex-column align-items-start width">
                     <div class="text-center mt-5 mb-1">
                         <h5>Create new folder</h5>
@@ -179,7 +168,7 @@ if (isset($_POST['upload'])) {
                                     <input type="text" name="createNewFolder" placeholder="Create new folder" class="form-control">
                                 </div>
                                 <div class="mt-2 align-self-end">
-                                    <input type="submit" name="newFolder" value="Create new folder" class="btn btn-primary">
+                                    <input type="submit" name="newFolder" value="Create new folder" class="btn btn-success">
                                 </div>
 
                             </div>
@@ -189,39 +178,37 @@ if (isset($_POST['upload'])) {
                         <p><?php echo $dirMessage ?? null ?></p>
                     </div>
                 </div>
-            </div>
-
-            <!-- upload folder -->
 
 
-            <div class="form-control">
-                <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST" enctype="multipart/form-data">
-                    <div class="d-flex flex-column">
-                        <div>
-                            <label for="upload">Select file to upload</label>
-                            <input type="file" name="upload">
+                <!-- upload folder -->
+                <div class="form-control width">
+                    <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST" enctype="multipart/form-data">
+                        <div class="d-flex flex-column">
+                            <div>
+                                <label for="upload" class="form-label">Select file to upload</label>
+                                <input type="file" name="upload" class="form-control">
+                            </div>
+                            <div class="mt-2 align-self-end">
+                                <input type="submit" name="upload" value="Upload file" class="btn btn-success">
+                            </div>
                         </div>
-                        <div class="mt-2 align-self-end">
-                            <input type="submit" name="upload" value="Upload file">
-                        </div>
+                    </form>
+                    <div class="mt-3">
+                        <?php echo $uplMessage ?? null ?>
                     </div>
-                </form>
-                <div class="mt-3">
-                    <?php echo $uplMessage ?? null ?>
-                </div>
-                <div>
-                    <span>Image name: <?php echo $_FILES['upload']['name'] ?? 'No image selected!' ?></span><br>
-                    <span>Image type: <?php echo $_FILES['upload']['type'] ?? 'No image selected!' ?></span><br>
-                    <span>Image size: <?php echo $_FILES['upload']['size'] ?? 'No image selected!' ?></span><br>
+                    <div>
+                        <span>Image name: <?php echo $_FILES['upload']['name'] ?? 'No image selected!' ?></span><br>
+                        <span>Image type: <?php echo $_FILES['upload']['type'] ?? 'No image selected!' ?></span><br>
+                        <span>Image size: <?php echo $_FILES['upload']['size'] ?? 'No image selected!' ?></span><br>
+                    </div>
                 </div>
             </div>
-
             <!-- table -->
             <div>
                 <div>
-                    <h3>File manager</h3>
+                    <h3 class="mt-5 mb-3">File manager</h3>
                 </div>
-                <table>
+                <table class="table table-hover table-bordered">
                     <tr>
                         <th>Name</th>
                         <th>Type</th>
@@ -239,15 +226,15 @@ if (isset($_POST['upload'])) {
                     $list = array_diff(scandir($current), array('.', '..'));
 
                     foreach ($list as $listItem) {
-                        $isFolder = is_dir($current . '/' . $listItem);
+                        $folderPath = $current . '/' . $listItem;
+                        $isFolder = is_dir($folderPath);
 
                         if ($isFolder) {
-                            if (isset($_GET['path'])) {
-                                print("<tr><td>" . "<a href='?path=" . $_GET['path'] . "/" . $listItem . "'>" . $listItem . "</a></td>");
+                                print("<tr><td>" . "<a href='?path=" . $folderPath . "'>" . $listItem . "</a></td>");
                                 print('<td>Directory</td>');
                                 print('<td></td>');
-                            }
                         }
+
                         $pathToFile = $current . '/' . $listItem;
                         if (is_file($pathToFile)) {
                             print("<tr><td>" . "<a href='?path=" . $pathToFile . "'>" .  $listItem . "</a></td>");
@@ -255,7 +242,7 @@ if (isset($_POST['upload'])) {
 
                             $_GET["del"] = $current . '/' . $listItem;
                             $_GET['path'] = $current . '/' . $listItem;
-                            print("<td>" . "<a href='delete.php?" . http_build_query($_GET) . "'>Delete</a>" . " " . "<a href='download.php?" . http_build_query($_GET) . "'> Download </a>" . "</td></tr>");
+                            print("<td>" . "<a class='btn btn-outline-danger' href='delete.php?" . http_build_query($_GET) . "'>Delete</a>" . " " . "<a class='btn btn-outline-success' href='download.php?" . http_build_query($_GET) . "'> Download </a>" . "</td></tr>");
                         }
                     }
                     print('</tbody></table>');
