@@ -37,8 +37,13 @@ if (isset($_GET['action']) == 'logout') {
 if (isset($_POST['newFolder'])) {
     if (!empty($_POST['createNewFolder'])) {
         $newFolderName = $_POST['createNewFolder'];
-        $dirCreate = './' . $_GET['path'] . '/' . $newFolderName;
 
+        $dirCreate = '.' . '/' . $newFolderName;
+        if(isset($_GET['path'])){
+            $dirCreate .=  $_GET['path'] . '/' . $newFolderName;
+        }
+
+       
         if (!is_dir($dirCreate)) {
             mkdir($dirCreate, 0777, true);
             $dirMessage =  '<p style="color: blue">A new file created!</p>';
@@ -221,35 +226,39 @@ if (isset($_POST['upload'])) {
                 </tr>
                 <!-- table logic -->
                 <?php
-                $current = '.' . $_GET['path'];
+   
+                $current = '.';
+            
+                if (isset($_GET['path'])) {
+                    $current .= $_GET['path'];
+                }
+               
                 $list = array_diff(scandir($current), array('.', '..'));
+
                 foreach ($list as $listItem) {
                     $isFolder = is_dir($current . '/' . $listItem);
+
                     if ($isFolder) {
-                        print("<tr><td>" . "<a href='?path=" . $_GET['path'] . "/" . $listItem . "'>" . $listItem . "</a></td>");
-                        print('<td>Directory</td>');
-                        print('<td></td>');
+                        if (isset($_GET['path'])) {
+                            print("<tr><td>" . "<a href='?path=" . $_GET['path'] . "/" . $listItem . "'>" . $listItem . "</a></td>");
+                            print('<td>Directory</td>');
+                            print('<td></td>');
+                        }
                     }
-                    if (is_file($current . '/' . $listItem)) {
-                        print("<tr><td>" . "<a href='?path=" . $_GET['path'] . "/" . $listItem . "'>" .  $listItem . "</a></td>");
+                    $pathToFile = $current . '/' . $listItem;
+                    if (is_file($pathToFile)) {
+                        print("<tr><td>" . "<a href='?path=" . $pathToFile . "'>" .  $listItem . "</a></td>");
                         print('<td>File</td>');
+                       
                         $_GET["del"] = $current . '/' . $listItem;
-                        $_GET['path'] = $current . '/' . $listItem;
-                        var_dump($_GET);
+                        $_GET['path'] = $current . '/' . $listItem; 
                         print("<td>" . "<a href='delete.php?" . http_build_query($_GET) . "'>Delete</a>" . " " . "<a href='download.php?" . http_build_query($_GET) . "'> Download </a>" . "</td></tr>");
                     }
                 }
                 print('</tbody></table>');
+
                 ?>
-
-
         </div>
-
-
-
-
-
-
     </div>
 
 </body>
