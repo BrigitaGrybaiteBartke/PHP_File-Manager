@@ -214,10 +214,44 @@ if (isset($_POST['upload'])) {
             </div>
         </div>
 
+        <!-- table -->
+        <div>
+            <div>
+                <h3>File manager</h3>
+            </div>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+                <!-- table logic -->
+                <?php
+                $current = './' . $_GET['path'];
+                $list = array_diff(scandir($current), array('.', '..'));
+                foreach ($list as $listItem) {
+                    $isFolder = is_dir($current . '/' . $listItem);
+                    if ($isFolder) {
+                        print("<tr><td>" . "<a href='?path=" . $_GET['path'] . "/" . $listItem . "'>" . $listItem . "</a></td>");
+                        print('<td>Directory</td>');
+                        print('<td></td>');
+                    }
+                    if (is_file($listItem)) {
+                        print("<tr><td>" . "<a href='?path=" . $_GET['path'] . "/" . $listItem . "'>" .  $listItem . "</a></td>");
+                        print('<td>File</td>');
+                        print("<td>" . "<a href='delete.php?del=$listItem'>Delete</a>" . " " . "<a href='download.php?link=$listItem'> Download </a>" . "</td></tr>");
+                    }
+                }
+                print('</tbody></table>')
+                ?>
 
-       
 
-    
+        </div>
+
+
+
+
+
 
     </div>
 
