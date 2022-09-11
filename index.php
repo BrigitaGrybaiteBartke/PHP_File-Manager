@@ -38,13 +38,6 @@ if (isset($_POST['newFolder'])) {
     if (!empty($_POST['createNewFolder'])) {
         $newFolderName = $_POST['createNewFolder'];
         $dirCreate = './' . $_GET['path'] . '/' . $newFolderName;
-        // if(isset($_GET['path'])) {
-        //     var_dump($dirCreate);
-            // $dir = $dirCreate . './';
-            // var_dump($dir);
-        // }
-        // jei GET paraemtras turi path reiksme
-        // pakeisti dirCreate parametro stringa terpiant path reiksme ir patikrinti ar toks folderis egzistuoja
 
         if (!is_dir($dirCreate)) {
             mkdir($dirCreate, 0777, true);
@@ -58,27 +51,22 @@ if (isset($_POST['newFolder'])) {
 // upload folder logic
 if (isset($_POST['upload'])) {
     $allowed_ext = ['png', 'jpg', 'jpeg', 'gif', 'svg'];
-    var_dump($allowed_ext);
     if (!empty($_FILES['upload']['name'])) {
         $file_name = $_FILES['upload']['name'];
         $file_size = $_FILES['upload']['size'];
         $file_tmp = $_FILES['upload']['tmp_name'];
-
-    
         $target_dir = "./${file_name}";
-        var_dump($target_dir);
-        if(isset($_GET['path'])) {
-         $target_dir = '.' . $_GET['path'] . '/' . $file_name;
-         
+
+        if (isset($_GET['path'])) {
+            $target_dir = '.' . $_GET['path'] . '/' . $file_name;
         }
-        var_dump($target_dir);
+
         $file_ext = explode('.', $file_name);
         $file_ext = strtolower(end($file_ext));
 
         if (in_array($file_ext, $allowed_ext)) {
             if ($file_size <= 1000000) {
                 $move = move_uploaded_file($file_tmp, $target_dir);
-                var_dump($move);
                 $message = '<p style="color: green">File uploaded</p>';
             } else {
                 $message = '<p style="color: red">File is too large</p>';
@@ -90,16 +78,6 @@ if (isset($_POST['upload'])) {
         $message = '<p style="color: red">Please choose a file</p>';
     }
 }
-
-
-?>
-
-
-<?php
-// testing
-// echo '<pre>';
-// var_dump($_FILES['upload'])
-var_dump($_SERVER['REQUEST_URI']);
 
 ?>
 
@@ -187,8 +165,8 @@ var_dump($_SERVER['REQUEST_URI']);
                     <h5>Create new folder</h5>
                 </div>
                 <div class="form-control">
-                
-                    <form action="<?php echo $_SERVER["PHP_SELF"] . '?'.http_build_query($_GET); ?>" method="POST">
+
+                    <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST">
                         <div class="d-flex flex-column">
                             <div>
                                 <label for="newFolder" class="form-label">Folder name: </label>
@@ -209,7 +187,7 @@ var_dump($_SERVER['REQUEST_URI']);
 
         <!-- upload folder -->
         <div class="form-control">
-            <form action="<?php echo $_SERVER["PHP_SELF"] . '?'.http_build_query($_GET); ?>" method="POST" enctype="multipart/form-data">
+            <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST" enctype="multipart/form-data">
                 <div class="d-flex flex-column">
                     <div>
                         <label for="upload">Select file to upload</label>
