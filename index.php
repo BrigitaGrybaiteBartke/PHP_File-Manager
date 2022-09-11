@@ -1,5 +1,6 @@
 <?php
 session_start();
+umask(0000); // This will let the permissions be 0777
 
 $message = '';
 $greeting = '';
@@ -36,7 +37,15 @@ if (isset($_GET['action']) == 'logout') {
 if (isset($_POST['newFolder'])) {
     if (!empty($_POST['createNewFolder'])) {
         $newFolderName = $_POST['createNewFolder'];
-        $dirCreate = './' . $newFolderName;
+        $dirCreate = './' . $_GET['path'] . '/' . $newFolderName;
+        // if(isset($_GET['path'])) {
+        //     var_dump($dirCreate);
+            // $dir = $dirCreate . './';
+            // var_dump($dir);
+        // }
+        // jei GET paraemtras turi path reiksme
+        // pakeisti dirCreate parametro stringa terpiant path reiksme ir patikrinti ar toks folderis egzistuoja
+
         if (!is_dir($dirCreate)) {
             mkdir($dirCreate, 0777, true);
             $dirMessage =  '<p style="color: blue">A new file created!</p>';
@@ -54,9 +63,15 @@ if (isset($_POST['upload'])) {
         $file_name = $_FILES['upload']['name'];
         $file_size = $_FILES['upload']['size'];
         $file_tmp = $_FILES['upload']['tmp_name'];
+
+    
         $target_dir = "./${file_name}";
         var_dump($target_dir);
-
+        if(isset($_GET['path'])) {
+         $target_dir = '.' . $_GET['path'] . '/' . $file_name;
+         
+        }
+        var_dump($target_dir);
         $file_ext = explode('.', $file_name);
         $file_ext = strtolower(end($file_ext));
 
@@ -84,7 +99,7 @@ if (isset($_POST['upload'])) {
 // testing
 // echo '<pre>';
 // var_dump($_FILES['upload'])
-
+var_dump($_SERVER['REQUEST_URI']);
 
 ?>
 
@@ -172,7 +187,8 @@ if (isset($_POST['upload'])) {
                     <h5>Create new folder</h5>
                 </div>
                 <div class="form-control">
-                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                
+                    <form action="<?php echo $_SERVER["PHP_SELF"] . '?'.http_build_query($_GET); ?>" method="POST">
                         <div class="d-flex flex-column">
                             <div>
                                 <label for="newFolder" class="form-label">Folder name: </label>
@@ -193,7 +209,7 @@ if (isset($_POST['upload'])) {
 
         <!-- upload folder -->
         <div class="form-control">
-            <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" enctype="multipart/form-data">
+            <form action="<?php echo $_SERVER["PHP_SELF"] . '?'.http_build_query($_GET); ?>" method="POST" enctype="multipart/form-data">
                 <div class="d-flex flex-column">
                     <div>
                         <label for="upload">Select file to upload</label>
@@ -227,7 +243,7 @@ if (isset($_POST['upload'])) {
                 </tr>
                 <!-- table logic -->
                 <?php
-                $current = './' . $_GET['path'];
+                $current = '.' . $_GET['path'];
                 $list = array_diff(scandir($current), array('.', '..'));
                 foreach ($list as $listItem) {
                     $isFolder = is_dir($current . '/' . $listItem);
@@ -236,13 +252,16 @@ if (isset($_POST['upload'])) {
                         print('<td>Directory</td>');
                         print('<td></td>');
                     }
-                    if (is_file($listItem)) {
+                    if (is_file($current . '/' . $listItem)) {
                         print("<tr><td>" . "<a href='?path=" . $_GET['path'] . "/" . $listItem . "'>" .  $listItem . "</a></td>");
                         print('<td>File</td>');
-                        print("<td>" . "<a href='delete.php?del=$listItem'>Delete</a>" . " " . "<a href='download.php?link=$listItem'> Download </a>" . "</td></tr>");
+                        $_GET["del"] = $current . '/' . $listItem;
+                        $_GET['path'] = $current . '/' . $listItem;
+                        var_dump($_GET);
+                        print("<td>" . "<a href='delete.php?" . http_build_query($_GET) . "'>Delete</a>" . " " . "<a href='download.php?" . http_build_query($_GET) . "'> Download </a>" . "</td></tr>");
                     }
                 }
-                print('</tbody></table>')
+                print('</tbody></table>');
                 ?>
 
 

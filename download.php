@@ -1,9 +1,9 @@
 <?php
 echo '<pre>';
-var_dump($_GET['link']);
+// var_dump($_GET['link']);
 
-if ($_GET['link']) {
-    $file = ('./' . $_GET['link']);
+if (isset($_GET['path'])) {
+    $file = ('./' . $_GET['path']);
     $fileToDownloadEscaped = str_replace("&nbsp;", " ", htmlentities($file, 0, 'utf-8'));
 
 
