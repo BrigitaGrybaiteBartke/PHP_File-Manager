@@ -23,8 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 }
 
 if (!empty($_SESSION['username']) and !empty($_SESSION['password'])) {
-    $greeting = "<h3 class='text-center'>Hello {$_SESSION['username']}!</h3>";
-    $logOut = "Click here to <a href=\"index.php?action=logout\">logout</a>";
+    $greeting = "<h3 class='text-center mt-4' style='font-weight: 800; font-size: 35px'>Hello {$_SESSION['username']}!</h3>";
+    $logOut = "<a href=\"index.php?action=logout\" class=\"link-secondary\">Logout</a>";
 } else {
     $guest = 'Welcome Guest!';
 }
@@ -37,7 +37,6 @@ if (isset($_GET['action']) == 'logout') {
 if (isset($_POST['newFolder'])) {
     if (!empty($_POST['createNewFolder'])) {
         $newFolderName = $_POST['createNewFolder'];
-
         $dirCreate = './' . $newFolderName;
 
         if (isset($_GET['path'])) {
@@ -56,31 +55,19 @@ if (isset($_POST['newFolder'])) {
 // File size conversion function
 function formatSizeUnits($bytes)
 {
-    if ($bytes >= 1073741824)
-    {
+    if ($bytes >= 1073741824) {
         $bytes = number_format($bytes / 1073741824, 2) . ' GB';
-    }
-    elseif ($bytes >= 1048576)
-    {
+    } elseif ($bytes >= 1048576) {
         $bytes = number_format($bytes / 1048576, 2) . ' MB';
-    }
-    elseif ($bytes >= 1024)
-    {
+    } elseif ($bytes >= 1024) {
         $bytes = number_format($bytes / 1024, 2) . ' KB';
-    }
-    elseif ($bytes > 1)
-    {
+    } elseif ($bytes > 1) {
         $bytes = $bytes . ' bytes';
-    }
-    elseif ($bytes == 1)
-    {
+    } elseif ($bytes == 1) {
         $bytes = $bytes . ' byte';
-    }
-    else
-    {
+    } else {
         $bytes = '0 bytes';
     }
-
     return $bytes;
 }
 
@@ -115,7 +102,6 @@ if (isset($_POST['upload'])) {
         $message = '<p style="color: red">Please choose a file</p>';
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -130,13 +116,18 @@ if (isset($_POST['upload'])) {
     <!-- Bootstrap  -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 
-
-
+    <!-- Google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;500;600;800&display=swap" rel="stylesheet">
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Maven Pro', sans-serif;
         }
@@ -150,23 +141,21 @@ if (isset($_POST['upload'])) {
 
 <body>
     <div class="container">
-        <div class="mt-2"><?php echo $guest ?? null ?></div>
-        <div class="mt-2"><?php echo $logOut ?? null ?></div>
+        <div class="mt-2 text-secondary"><?php echo $guest ?? null ?></div>
+        <div class="mt-2 text-secondary"><?php echo $logOut ?? null ?></div>
 
-        <!-- login form -->
-        <!-- logout form -->
+        <!-- login form / logout -->
         <div>
             <?php isset($_SESSION['logged']) == true ? print($greeting) : null ?>
             <div <?php isset($_SESSION['logged']) == true ? print('style="display: none"') : print('style="display: block"') ?>>
                 <div class="d-flex flex-column align-items-center">
                     <div class="text-center mt-5 mb-4">
-                        <h2>Welcome!</h2>
-                        <h5>Please fill in the login form!</h5>
+                        <h2 style="font-weight: 800">Welcome!</h2>
+                        <h5 style="font-weight: 600">Please fill in the login form!</h5>
                     </div>
-                    <div class="width form-control">
+                    <div class="width form-control shadow p-3 mb-5 bg-body rounded">
                         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
                             <div class="d-flex flex-column">
-
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Username: </label>
                                     <input type="text" name="username" placeholder="username = Bri" class="form-control">
@@ -189,15 +178,13 @@ if (isset($_POST['upload'])) {
         </div>
 
         <div <?php isset($_SESSION['logged']) == false ? print('style="display: none"') : print('style="display: block"') ?>>
-            
-            <div class="d-flex justify-content-evenly align-items-end">
+            <div class="d-flex justify-content-evenly align-items-center mt-5 shadow p-3 mb-5 bg-body rounded">
                 <!-- create new folder -->
                 <div class="d-flex flex-column align-items-start width">
-                    <div class="text-center mt-5 mb-1">
+                    <div class="text-center mb-1">
                         <h5>Create new folder</h5>
                     </div>
                     <div class="form-control">
-
                         <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST">
                             <div class="d-flex flex-column">
                                 <div>
@@ -207,7 +194,6 @@ if (isset($_POST['upload'])) {
                                 <div class="mt-2 align-self-end">
                                     <input type="submit" name="newFolder" value="Create new folder" class="btn btn-success">
                                 </div>
-
                             </div>
                         </form>
                     </div>
@@ -217,35 +203,38 @@ if (isset($_POST['upload'])) {
                 </div>
 
                 <!-- upload file -->
-                <div class="form-control width">
-                    <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST" enctype="multipart/form-data">
-                        <div class="d-flex flex-column">
-                            <div>
-                                <label for="upload" class="form-label">Select file to upload</label>
-                                <input type="file" name="upload" class="form-control">
+                <div>
+                    <h5 class="form-label mb-2">Select file to upload</h5>
+                    <div class="form-control width">
+                        <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST" enctype="multipart/form-data">
+                            <div class="d-flex flex-column">
+                                <div>
+                                    <input type="file" name="upload" class="form-control">
+                                </div>
+                                <div class="mt-2 align-self-end">
+                                    <input type="submit" name="upload" value="Upload file" class="btn btn-success">
+                                </div>
                             </div>
-                            <div class="mt-2 align-self-end">
-                                <input type="submit" name="upload" value="Upload file" class="btn btn-success">
-                            </div>
+                        </form>
+                        <div class="mt-3">
+                            <?php echo $uplMessage ?? null ?>
                         </div>
-                    </form>
-                    <div class="mt-3">
-                        <?php echo $uplMessage ?? null ?>
-                    </div>
-                    <div>
-                        <span>File name: <?php echo $file_name ?? 'No file selected!' ?></span><br>
-                        <span>File type: <?php echo $file_type ?? 'No file selected!' ?></span><br>
-                        <span>File size: <?php empty($file_size) ? print('0 bytes') : print(formatSizeUnits($file_size)) ?></span><br>
+                        <div>
+                            <span>File name: <?php echo $file_name ?? 'No file selected!' ?></span><br>
+                            <span>File type: <?php echo $file_type ?? 'No file selected!' ?></span><br>
+                            <span>File size: <?php empty($file_size) ? print('0 bytes') : print(formatSizeUnits($file_size)) ?></span><br>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <!-- table -->
             <div>
                 <div>
-                    <h3 class="mt-5 mb-3">File Browser</h3>
+                    <h3 class="mt-5 mb-3" style="font-weight: 600">File Browser</h3>
                 </div>
-                <table class="table table-hover table-bordered">
-                    <tr>
+                <table class="table table-hover table-bordered shadow p-3 mb-3 bg-body rounded">
+                    <tr class="table-secondary">
                         <th>Name</th>
                         <th>Type</th>
                         <th>Actions</th>
@@ -271,28 +260,31 @@ if (isset($_POST['upload'])) {
                         }
 
                         $pathToFile = $current . '/' . $listItem;
+
                         if (is_file($pathToFile)) {
                             print("<tr><td>" . "<a href='?path=" . $pathToFile . "'>" .  $listItem . "</a></td>");
                             print('<td>File</td>');
-
                             $_GET["del"] = $current . '/' . $listItem;
                             $_GET['path'] = $current . '/' . $listItem;
                             print("<td>" . "<a class='btn btn-outline-danger' href='delete.php?" . http_build_query($_GET) . "'>Delete</a>" . " " . "<a class='btn btn-outline-success' href='download.php?" . http_build_query($_GET) . "'> Download </a>" . "</td></tr>");
                         }
                     }
-                    
                     ?>
                 </table>
 
-                <!-- Homepage / Back buttons -->
-                <div>
-                    <a href="<?php print('./') ?>" class='btn btn-light'>Home page</a>
-                    <a href="<?php $q_string = explode('/', rtrim($_SERVER['QUERY_STRING'], '/'));
-                                array_pop($q_string);
-                                count($q_string) == 0
-                                    ? print('./')
-                                    : print('?' . implode('/', $q_string) . '/');
-                                ?>" class='btn btn-light'>Back</a>
+                <!-- Homepage button / Back button -->
+                <div class="d-flex flex-row justify-content-end align-items-center mb-3">
+                    <div>
+                        <a href="<?php print('./') ?>" class='btn btn-light me-2'>Home page</a>
+                    </div>
+                    <div>
+                        <a href="<?php $q_string = explode('/', rtrim($_SERVER['QUERY_STRING'], '/'));
+                                    array_pop($q_string);
+                                    count($q_string) == 0
+                                        ? print('./')
+                                        : print('?' . implode('/', $q_string) . '/');
+                                    ?>" class='btn btn-light'>Back</a>
+                    </div>
                 </div>
             </div>
         </div>
