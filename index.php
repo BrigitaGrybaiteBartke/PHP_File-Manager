@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     if (isset($_POST['submit']) and !empty($_POST['username'] and !empty($_POST['password']))) {
         $username = filter_var($_POST['username'], FILTER_SANITIZE_SPECIAL_CHARS);
         $password = filter_var($_POST['password'], FILTER_SANITIZE_SPECIAL_CHARS);
-        if ($username == 'bri' and $password == '111') {
+        if ($username == 'Bri' and $password == '111') {
             $_SESSION['username'] = $username;
             $_SESSION['password'] = $password;
             $_SESSION['logged'] = true;
@@ -39,8 +39,9 @@ if (isset($_POST['newFolder'])) {
         $newFolderName = $_POST['createNewFolder'];
 
         $dirCreate = './' . $newFolderName;
+        
         if (isset($_GET['path'])) {
-            $dirCreate .=  $_GET['path'] . '/' . $newFolderName;
+            $dirCreate =  $_GET['path'] . '/' . $newFolderName;
         }
 
         if (!is_dir($dirCreate)) {
@@ -59,10 +60,11 @@ if (isset($_POST['upload'])) {
         $file_name = $_FILES['upload']['name'];
         $file_size = $_FILES['upload']['size'];
         $file_tmp = $_FILES['upload']['tmp_name'];
-        $target_dir = "./${file_name}";
+        // $target_dir = "./${file_name}";
+        $target_dir = './' . $file_name;
 
         if (isset($_GET['path'])) {
-            $target_dir = '.' . $_GET['path'] . '/' . $file_name;
+            $target_dir = $_GET['path'] . '/' . $file_name;
         }
 
         $file_ext = explode('.', $file_name);
@@ -97,14 +99,17 @@ if (isset($_POST['upload'])) {
     <!-- Bootstrap  -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 
+
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Maven Pro', sans-serif;
         }
+
         .width {
             width: 350px;
         }
@@ -133,7 +138,7 @@ if (isset($_POST['upload'])) {
 
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Username: </label>
-                                    <input type="text" name="username" placeholder="username = bri" class="form-control">
+                                    <input type="text" name="username" placeholder="username = Bri" class="form-control">
                                 </div>
                                 <div>
                                     <label for="password" class="form-label">Password: </label>
@@ -220,8 +225,10 @@ if (isset($_POST['upload'])) {
                     $current = '.';
 
                     if (isset($_GET['path'])) {
-                        $current .= $_GET['path'];
+                        $current = $_GET['path'];
                     }
+
+                    var_dump($current);
 
                     $list = array_diff(scandir($current), array('.', '..'));
 
@@ -230,9 +237,9 @@ if (isset($_POST['upload'])) {
                         $isFolder = is_dir($folderPath);
 
                         if ($isFolder) {
-                                print("<tr><td>" . "<a href='?path=" . $folderPath . "'>" . $listItem . "</a></td>");
-                                print('<td>Directory</td>');
-                                print('<td></td>');
+                            print("<tr><td>" . "<a href='?path=" . $folderPath . "'>" . $listItem . "</a></td>");
+                            print('<td>Directory</td>');
+                            print('<td></td>');
                         }
 
                         $pathToFile = $current . '/' . $listItem;
