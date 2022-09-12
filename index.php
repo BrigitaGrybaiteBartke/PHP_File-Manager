@@ -39,7 +39,7 @@ if (isset($_POST['newFolder'])) {
         $newFolderName = $_POST['createNewFolder'];
 
         $dirCreate = './' . $newFolderName;
-        
+
         if (isset($_GET['path'])) {
             $dirCreate =  $_GET['path'] . '/' . $newFolderName;
         }
@@ -55,7 +55,7 @@ if (isset($_POST['newFolder'])) {
 
 // upload folder logic
 if (isset($_POST['upload'])) {
-    $allowed_ext = ['png', 'jpg', 'jpeg', 'gif', 'svg'];
+    $allowed_ext = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'pdf', 'zip', 'txt', 'odt'];
     if (!empty($_FILES['upload']['name'])) {
         $file_name = $_FILES['upload']['name'];
         $file_size = $_FILES['upload']['size'];
@@ -104,7 +104,7 @@ if (isset($_POST['upload'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;600;800&display=swap" rel="stylesheet">
-    
+
     <style>
         body {
             font-family: 'Maven Pro', sans-serif;
@@ -211,7 +211,7 @@ if (isset($_POST['upload'])) {
             <!-- table -->
             <div>
                 <div>
-                    <h3 class="mt-5 mb-3">File manager</h3>
+                    <h3 class="mt-5 mb-3">File Browser</h3>
                 </div>
                 <table class="table table-hover table-bordered">
                     <tr>
@@ -227,8 +227,6 @@ if (isset($_POST['upload'])) {
                     if (isset($_GET['path'])) {
                         $current = $_GET['path'];
                     }
-
-                    var_dump($current);
 
                     $list = array_diff(scandir($current), array('.', '..'));
 
@@ -255,6 +253,17 @@ if (isset($_POST['upload'])) {
                     print('</tbody></table>');
 
                     ?>
+
+                    <!-- Back button -->
+                    <div>
+                        <a href="<?php print('./') ?>" class='btn btn-light'>Home page</a>
+                        <a href="<?php $q_string = explode('/', rtrim($_SERVER['QUERY_STRING'], '/'));
+                                                        array_pop($q_string);
+                                                        count($q_string) == 0
+                                                            ? print('./')
+                                                            : print('?' . implode('/', $q_string) . '/');
+                                                        ?>" class='btn btn-light'>Back</a>
+                    </div>
             </div>
         </div>
     </div>
