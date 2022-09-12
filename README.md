@@ -20,9 +20,9 @@ This is a simple file browser application with basic functionality.
 
 ## Getting Started
 * Clone directory: *https://github.com/BrigitaGrybaiteBartke/PHP_Sprint-1*
-* Run XAMPP and start "Apache" Server
+* Run XAMPP and start Apache Server
 * Open XAMPP *htdocs* folder - clone application code to this folder
-* Home page: *http://localhost/* **ENTER created folder name here**
+* Home page: *http://localhost/* "**ENTER created folder name here**"
 * Login credentials are specified in login form input field placeholders
 
 ## Future improvements
