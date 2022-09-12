@@ -53,14 +53,45 @@ if (isset($_POST['newFolder'])) {
     }
 }
 
-// upload folder logic
+// File size conversion function
+function formatSizeUnits($bytes)
+{
+    if ($bytes >= 1073741824)
+    {
+        $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+    }
+    elseif ($bytes >= 1048576)
+    {
+        $bytes = number_format($bytes / 1048576, 2) . ' MB';
+    }
+    elseif ($bytes >= 1024)
+    {
+        $bytes = number_format($bytes / 1024, 2) . ' KB';
+    }
+    elseif ($bytes > 1)
+    {
+        $bytes = $bytes . ' bytes';
+    }
+    elseif ($bytes == 1)
+    {
+        $bytes = $bytes . ' byte';
+    }
+    else
+    {
+        $bytes = '0 bytes';
+    }
+
+    return $bytes;
+}
+
+// upload file logic
 if (isset($_POST['upload'])) {
     $allowed_ext = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'pdf', 'zip', 'txt', 'odt'];
     if (!empty($_FILES['upload']['name'])) {
         $file_name = $_FILES['upload']['name'];
+        $file_type = $_FILES['upload']['type'];
         $file_size = $_FILES['upload']['size'];
         $file_tmp = $_FILES['upload']['tmp_name'];
-        // $target_dir = "./${file_name}";
         $target_dir = './' . $file_name;
 
         if (isset($_GET['path'])) {
@@ -71,7 +102,7 @@ if (isset($_POST['upload'])) {
         $file_ext = strtolower(end($file_ext));
 
         if (in_array($file_ext, $allowed_ext)) {
-            if ($file_size <= 1000000) {
+            if ($file_size <= 2097152) {
                 $move = move_uploaded_file($file_tmp, $target_dir);
                 $message = '<p style="color: green">File uploaded</p>';
             } else {
@@ -158,8 +189,9 @@ if (isset($_POST['upload'])) {
         </div>
 
         <div <?php isset($_SESSION['logged']) == false ? print('style="display: none"') : print('style="display: block"') ?>>
-            <!-- create new folder -->
+            
             <div class="d-flex justify-content-evenly align-items-end">
+                <!-- create new folder -->
                 <div class="d-flex flex-column align-items-start width">
                     <div class="text-center mt-5 mb-1">
                         <h5>Create new folder</h5>
@@ -184,8 +216,7 @@ if (isset($_POST['upload'])) {
                     </div>
                 </div>
 
-
-                <!-- upload folder -->
+                <!-- upload file -->
                 <div class="form-control width">
                     <form action="<?php echo $_SERVER["PHP_SELF"] . '?' . http_build_query($_GET); ?>" method="POST" enctype="multipart/form-data">
                         <div class="d-flex flex-column">
@@ -202,9 +233,9 @@ if (isset($_POST['upload'])) {
                         <?php echo $uplMessage ?? null ?>
                     </div>
                     <div>
-                        <span>Image name: <?php echo $_FILES['upload']['name'] ?? 'No image selected!' ?></span><br>
-                        <span>Image type: <?php echo $_FILES['upload']['type'] ?? 'No image selected!' ?></span><br>
-                        <span>Image size: <?php echo $_FILES['upload']['size'] ?? 'No image selected!' ?></span><br>
+                        <span>File name: <?php echo $file_name ?? 'No file selected!' ?></span><br>
+                        <span>File type: <?php echo $file_type ?? 'No file selected!' ?></span><br>
+                        <span>File size: <?php empty($file_size) ? print('0 bytes') : print(formatSizeUnits($file_size)) ?></span><br>
                     </div>
                 </div>
             </div>
@@ -221,7 +252,6 @@ if (isset($_POST['upload'])) {
                     </tr>
                     <!-- table logic -->
                     <?php
-
                     $current = '.';
 
                     if (isset($_GET['path'])) {
@@ -237,7 +267,7 @@ if (isset($_POST['upload'])) {
                         if ($isFolder) {
                             print("<tr><td>" . "<a href='?path=" . $folderPath . "'>" . $listItem . "</a></td>");
                             print('<td>Directory</td>');
-                            print('<td></td>');
+                            print('<td></td></tr>');
                         }
 
                         $pathToFile = $current . '/' . $listItem;
@@ -250,20 +280,20 @@ if (isset($_POST['upload'])) {
                             print("<td>" . "<a class='btn btn-outline-danger' href='delete.php?" . http_build_query($_GET) . "'>Delete</a>" . " " . "<a class='btn btn-outline-success' href='download.php?" . http_build_query($_GET) . "'> Download </a>" . "</td></tr>");
                         }
                     }
-                    print('</tbody></table>');
-
+                    
                     ?>
+                </table>
 
-                    <!-- Back button -->
-                    <div>
-                        <a href="<?php print('./') ?>" class='btn btn-light'>Home page</a>
-                        <a href="<?php $q_string = explode('/', rtrim($_SERVER['QUERY_STRING'], '/'));
-                                                        array_pop($q_string);
-                                                        count($q_string) == 0
-                                                            ? print('./')
-                                                            : print('?' . implode('/', $q_string) . '/');
-                                                        ?>" class='btn btn-light'>Back</a>
-                    </div>
+                <!-- Homepage / Back buttons -->
+                <div>
+                    <a href="<?php print('./') ?>" class='btn btn-light'>Home page</a>
+                    <a href="<?php $q_string = explode('/', rtrim($_SERVER['QUERY_STRING'], '/'));
+                                array_pop($q_string);
+                                count($q_string) == 0
+                                    ? print('./')
+                                    : print('?' . implode('/', $q_string) . '/');
+                                ?>" class='btn btn-light'>Back</a>
+                </div>
             </div>
         </div>
     </div>
