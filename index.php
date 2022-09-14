@@ -35,7 +35,7 @@ if (isset($_GET['action']) == 'logout') {
 
 // create new folder logic
 if (isset($_POST['newFolder'])) {
-    if (!empty($_POST['createNewFolder'])) {
+    if (!empty($_POST['createNewFolder']) and $_POST['createNewFolder'] != '') {
         $newFolderName = $_POST['createNewFolder'];
         $dirCreate = './' . $newFolderName;
 
@@ -49,6 +49,8 @@ if (isset($_POST['newFolder'])) {
         } else {
             $dirMessage =  '<p style="color: red">A folder with the same name already exist!</p>';
         }
+    } else {
+        $dirMessage =  '<p style="color: red">Input field is empty!</p>';
     }
 }
 
@@ -262,7 +264,7 @@ if (isset($_POST['upload'])) {
                         $pathToFile = $current . '/' . $listItem;
 
                         if (is_file($pathToFile)) {
-                            print("<tr><td>" . "<a href='?path=" . $pathToFile . "'>" .  $listItem . "</a></td>");
+                            print("<tr><td>" . "<a href='?path=" . $current . "'>" .  $listItem . "</a></td>");
                             print('<td>File</td>');
                             $_GET["del"] = $current . '/' . $listItem;
                             $_GET['path'] = $current . '/' . $listItem;
