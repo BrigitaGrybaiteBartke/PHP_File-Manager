@@ -1,4 +1,4 @@
-# PHP_File Browser
+# PHP File Browser
 
 ## About
 This is a simple file browser application with basic functionality.
