@@ -19,7 +19,11 @@ This is a simple file browser application with basic functionality.
 * raw CSS
 
 ## Getting Started
-* Clone directory: *https://github.com/BrigitaGrybaiteBartke/PHP_Sprint-1*
+* Clone directory:
+```
+git clone https://github.com/BrigitaGrybaiteBartke/PHP_Sprint-1
+```
+
 * Run XAMPP and start Apache Server
 * Open XAMPP *htdocs* folder - clone application code to this folder
 * Home page: *http://localhost/* "**ENTER created folder name here**"
@@ -31,6 +35,7 @@ This is a simple file browser application with basic functionality.
 * Delete folders - if it's not empty, add request for additional confirmation
 
 ## Author
-Project is created by Brigita Grybaitė-Bartkė.
-[Github](https://github.com/BrigitaGrybaiteBartke)
+Project is created by Brigita Grybaitė-Bartkė,
+
+[Github](https://github.com/BrigitaGrybaiteBartke),
 [Linkedin](https://www.linkedin.com/in/brigita-grybait%C4%97-bartk%C4%97-487403112/)
